@@ -22,9 +22,6 @@ public class EventService {
 	@Autowired
 	private EventRepository repository;
 	
-	@Autowired
-	private CityRepository cityRepository; 
-	
 	@Transactional
 	public EventDTO update(Long id, EventDTO dto) {
 		try {
@@ -50,16 +47,11 @@ public class EventService {
 		}
 	}
 	
-	private void copyDtoToEntity(EventDTO dto, Event entity) {
+	private void copyDTOToEntity(EventDTO dto, Event entity) {
 	    entity.setName(dto.getName());
 	    entity.setUrl(dto.getUrl());
 	    entity.setDate(dto.getDate());
 	    entity.setCity(new City(dto.getCityId(), null));
-
-		for (EventDTO citDTO : dto.getCityId()) {
-			City city = cityRepository.getOne(citDTO.getId());
-			entity.getCity().getId();
-		}
 	}
 }
 
