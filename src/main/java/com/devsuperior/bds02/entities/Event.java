@@ -1,18 +1,24 @@
 package com.devsuperior.bds02.entities;
 
+import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "tb_event")
-public class Event {
+public class Event implements  Serializable {
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,19 +27,20 @@ public class Event {
 	private LocalDate date;
 	private String url;
 	
-	@ManyToOne
-	@JoinColumn(name = "city_id")
-	private City city;
+	@ManyToMany
+	@JoinTable(name = "tb_event_city",
+		joinColumns = @JoinColumn(name = "event_id"),
+		inverseJoinColumns = @JoinColumn(name = "city_id"))
+	Set<City> cities = new HashSet<>();
 	
 	public Event() {
 	}
 
-	public Event(Long id, String name, LocalDate date, String url, City city) {
+	public Event(Long id, String name, LocalDate date, String url) {
 		this.id = id;
 		this.name = name;
 		this.date = date;
 		this.url = url;
-		this.city = city;
 	}
 
 	public Long getId() {
@@ -68,11 +75,25 @@ public class Event {
 		this.url = url;
 	}
 
-	public City getCity() {
-		return city;
+	public Set<City> getCities() {
+		return cities;
 	}
 
-	public void setCity(City city) {
-		this.city = city;
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Event other = (Event) obj;
+		return Objects.equals(id, other.id);
 	}
 }
